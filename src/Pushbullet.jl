@@ -1,11 +1,22 @@
 module Pushbullet
 
-# package code goes here
+export user, devices, push_note
 
+# package code goes here
 using Requests
+using JSON
 using Compat
 
 const PB_API_URL = "api.pushbullet.com/v2/"
+
+type PushbulletException <: Exception
+    page :: String
+    method :: Symbol
+    status :: Int
+end
+
+Base.showerror(io :: IO, e :: PushbulletException) =
+    print(io, uppercase(string(e.method)), " ", e.page, " HTTP Error Code: ", e.status)
 
 function load_key(filepath="~/.pushbullet.key")
     fn = expanduser(filepath)
@@ -14,45 +25,48 @@ function load_key(filepath="~/.pushbullet.key")
     end
 end
 
-function rest_url(page; pbkey="")
-    if isempty(pbkey)
-        pbkey = load_key()
-    end
-    string("https://", pbkey, ":@", PB_API_URL, page)
+const PBKEY = load_key()
+
+function rest_url(page)
+    string("https://", PBKEY, ":@", PB_API_URL, page)
 end
 
-function api_call(page; pbkey="")
-    url = rest_url(page, pbkey=pbkey)
-    response = get(url)
+function api_call(page; method=:get, jsdata="")
+    url = rest_url(page)
+    if method == :get
+        response = get(url)
+    elseif method == :post
+        response = post(url, json=jsdata)
+    else
+        throw(ArgumentError("method must be :get or :post"))
+    end
+
     if response.status == 200
         JSON.parse(response.data)
     else
-        Dict{String,Any}[]
+        throw(PushbulletException(page, method, response.status))
     end
 end
 
-function user(;pbkey="")
+function user()
     api_call("users/me")
 end
 
-function devices(;pbkey="")
-    data = api_call("devices")
-    if haskey(data, "devices")
-        data["devices"]
-    else
-        Any[]
-    end
+function devices()
+    api_call("devices")["devices"]
 end
 
-function push(device_iden, ptype="note", ptitle="", pbody=""; pbkey="")
-    url = rest_url("pushes", pbkey=pbkey)
+function push(device_iden, push_data)
+    api_call("pushes", method=:post, jsdata=push_data)
+end
+
+function push_note(device_iden, ptitle="", pbody="")
     push_data = @compat Dict(
         :device_iden => device_iden,
-        :type => ptype,
+        :type => "note",
         :title => ptitle,
         :body => pbody)
-    response = post(url, json = push_data)
-    response.status
+    push(device_iden, push_data)
 end
 
 end # module
