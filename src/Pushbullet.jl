@@ -53,45 +53,53 @@ function devices()
     api_call("devices")["devices"]
 end
 
-function push(device_iden, push_data)
+function push(push_data)
     api_call("pushes", method=:post, jsdata=push_data)
+end
+
+function set_target!(push_data, target="")
+    if isempty(target)
+        push_data
+    else
+        push_data[:device_iden] = target
+    end
 end
 
 function push_note(device_iden, ptitle="", pbody="")
     push_data = @compat Dict(
-        :device_iden => device_iden,
         :type => "note",
         :title => ptitle,
         :body => pbody)
-    push(device_iden, push_data)
+    set_target!(push_data, device_iden)
+    push(push_data)
 end
 
 function push_link(device_iden, ptitle="", pbody="", purl="")
     push_data = @compat Dict(
-        :device_iden => device_iden,
         :type => "link",
         :title => ptitle,
         :body => pbody,
         :url => purl)
-    push(device_iden, push_data)
+    set_target!(push_data, device_iden)
+    push(push_data)
 end
 
 function push_address(device_iden, pname="", paddress="")
     push_data = @compat Dict(
-        :device_iden => device_iden,
         :type => "address",
         :name => pname,
         :address => paddress)
-    push(device_iden, push_data)
+    set_target!(push_data, device_iden)
+    push(push_data)
 end
 
 function push_list(device_iden, ptitle="", pitems=[])
     push_data = @compat Dict(
-        :device_iden => device_iden,
         :type => "list",
         :title => ptitle,
         :items => pitems)
-    push(device_iden, push_data)
+    set_target!(push_data, device_iden)
+    push(push_data)
 end
 
 end # module
