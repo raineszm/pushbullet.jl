@@ -27,12 +27,9 @@ end
 
 const PBKEY = load_key()
 
-function rest_url(page)
-    string("https://", PBKEY, ":@", PB_API_URL, page)
-end
-
 function api_call(page; method=:get, jsdata="")
-    url = rest_url(page)
+    url = string("https://", PBKEY, ":@", PB_API_URL, page)
+
     if method == :get
         response = get(url)
     elseif method == :post
@@ -66,6 +63,34 @@ function push_note(device_iden, ptitle="", pbody="")
         :type => "note",
         :title => ptitle,
         :body => pbody)
+    push(device_iden, push_data)
+end
+
+function push_link(device_iden, ptitle="", pbody="", purl="")
+    push_data = @compat Dict(
+        :device_iden => device_iden,
+        :type => "link",
+        :title => ptitle,
+        :body => pbody,
+        :url => purl)
+    push(device_iden, push_data)
+end
+
+function push_address(device_iden, pname="", paddress="")
+    push_data = @compat Dict(
+        :device_iden => device_iden,
+        :type => "address",
+        :name => pname,
+        :address => paddress)
+    push(device_iden, push_data)
+end
+
+function push_list(device_iden, ptitle="", pitems=[])
+    push_data = @compat Dict(
+        :device_iden => device_iden,
+        :type => "list",
+        :title => ptitle,
+        :items => pitems)
     push(device_iden, push_data)
 end
 
