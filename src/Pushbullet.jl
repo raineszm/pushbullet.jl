@@ -49,8 +49,31 @@ function user()
     api_call("users/me")
 end
 
-function devices()
-    api_call("devices")["devices"]
+function matchattribute(device, key :: String, val :: Number)
+    device[key] == val
+end
+
+function matchattribute(device, key :: String, val :: String)
+    contains(device[key], val)
+end
+
+function matchattribute(device, key :: String, val :: Regex)
+    ismatch(val, device[key])
+end
+
+function matchattribute(device, key :: String, predicate :: Function)
+    predicate(device[key])
+end
+
+function devices(;args...)
+    devs = api_call("devices")["devices"]
+    if isempty(args)
+        devs
+    else
+        filter!(devs) do dev
+            all([matchattribute(dev, string(k), v) for (k, v) in args])
+        end
+    end
 end
 
 function push(push_data)
