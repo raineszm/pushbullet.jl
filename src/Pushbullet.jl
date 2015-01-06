@@ -65,39 +65,39 @@ function set_target!(push_data, target="")
     end
 end
 
-function push_note(device_iden, ptitle="", pbody="")
+function push_note(device_iden, title="", body="")
     push_data = @compat Dict(
         :type => "note",
-        :title => ptitle,
-        :body => pbody)
+        :title => title,
+        :body => body)
     set_target!(push_data, device_iden)
     push(push_data)
 end
 
-function push_link(device_iden, ptitle="", pbody="", purl="")
+function push_link(device_iden, title="", body="", url="")
     push_data = @compat Dict(
         :type => "link",
-        :title => ptitle,
-        :body => pbody,
-        :url => purl)
+        :title => title,
+        :body => body,
+        :url => url)
     set_target!(push_data, device_iden)
     push(push_data)
 end
 
-function push_address(device_iden, pname="", paddress="")
+function push_address(device_iden, name="", address="")
     push_data = @compat Dict(
         :type => "address",
-        :name => pname,
-        :address => paddress)
+        :name => name,
+        :address => address)
     set_target!(push_data, device_iden)
     push(push_data)
 end
 
-function push_list(device_iden, ptitle="", pitems=[])
+function push_list(device_iden, title="", items=[])
     push_data = @compat Dict(
         :type => "list",
-        :title => ptitle,
-        :items => pitems)
+        :title => title,
+        :items => items)
     set_target!(push_data, device_iden)
     push(push_data)
 end
