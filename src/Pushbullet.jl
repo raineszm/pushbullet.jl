@@ -89,12 +89,16 @@ function push(push_data)
     api_call("pushes", method=:post, jsdata=push_data)
 end
 
-function set_target!(push_data, target="")
+function set_target!(push_data, target :: String)
     if isempty(target)
         push_data
     else
         push_data[:device_iden] = target
     end
+end
+
+function set_target!(push_data, target :: Dict{String, Any})
+    set_target!(push_data, target["iden"])
 end
 
 function push_note(device_iden, title="", body="")
