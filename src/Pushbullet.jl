@@ -76,6 +76,15 @@ function devices(;args...)
     end
 end
 
+function iden(;args...)
+    devs = devices(;args...)
+    if isempty(devs)
+        ""
+    else
+        devs[1]["iden"]
+    end
+end
+
 function push(push_data)
     api_call("pushes", method=:post, jsdata=push_data)
 end
