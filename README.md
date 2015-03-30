@@ -14,7 +14,7 @@ Pushbullet.jl provides the `push_note`, `push_address`, `push_link`, and `push_a
 
 ### Getting identifiers
 
-Pushbullet.jl can match devices or identifiers by any of the attributes documented at [](https://docs.pushbullet.com/#devices), comparing by equality, regex, or with a provided predicate function. Calls take the form
+Pushbullet.jl can match devices or identifiers by any of the attributes documented at [https://docs.pushbullet.com/#devices](on the Pushbullet website), comparing by equality, regex, or with a provided predicate function. Calls take the form
 
 ```julia
 Pushbullet.devices(attr1=matcher1, attr2=matcher2, ...)
