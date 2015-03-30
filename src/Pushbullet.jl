@@ -1,8 +1,7 @@
 module Pushbullet
 
-export user, devices, push_note
+export user, devices, push_note, push_address, push_link, push_list
 
-# package code goes here
 using Requests
 using JSON
 using Compat
