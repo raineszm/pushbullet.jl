@@ -9,7 +9,7 @@ using Compat
 const PB_API_URL = "api.pushbullet.com/v2/"
 
 type PushbulletException <: Exception
-    page :: String
+    page :: AbstractString
     method :: Symbol
     status :: Int
 end
@@ -48,19 +48,19 @@ function user()
     api_call("users/me")
 end
 
-function matchattribute(device, key :: String, val :: Number)
+function matchattribute(device, key :: AbstractString, val :: Number)
     device[key] == val
 end
 
-function matchattribute(device, key :: String, val :: String)
+function matchattribute(device, key :: AbstractString, val :: String)
     contains(device[key], val)
 end
 
-function matchattribute(device, key :: String, val :: Regex)
+function matchattribute(device, key :: AbstractString, val :: Regex)
     ismatch(val, device[key])
 end
 
-function matchattribute(device, key :: String, predicate :: Function)
+function matchattribute(device, key :: AbstractString, predicate :: Function)
     predicate(device[key])
 end
 
@@ -88,7 +88,7 @@ function push(push_data)
     api_call("pushes", method=:post, jsdata=push_data)
 end
 
-function set_target!(push_data, target :: String)
+function set_target!(push_data, target :: AbstractString)
     if isempty(target)
         push_data
     else
@@ -96,7 +96,7 @@ function set_target!(push_data, target :: String)
     end
 end
 
-function set_target!(push_data, target :: Dict{String, Any})
+function set_target!(push_data, target :: Dict{AbstractString, Any})
     set_target!(push_data, target["iden"])
 end
 
