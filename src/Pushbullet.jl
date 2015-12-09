@@ -52,7 +52,7 @@ function matchattribute(device, key :: AbstractString, val :: Number)
     device[key] == val
 end
 
-function matchattribute(device, key :: AbstractString, val :: String)
+function matchattribute(device, key :: AbstractString, val :: AbstractString)
     contains(device[key], val)
 end
 
