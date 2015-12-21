@@ -3,7 +3,6 @@ module Pushbullet
 export user, devices, push_note, push_address, push_link, push_list
 
 using Requests
-using JSON
 using Compat
 
 const PB_API_URL = "api.pushbullet.com/v2/"
@@ -38,7 +37,7 @@ function api_call(page; method=:get, jsdata="")
     end
 
     if response.status == 200
-        JSON.parse(response.data)
+       Requests.json(response)
     else
         throw(PushbulletException(page, method, response.status))
     end
