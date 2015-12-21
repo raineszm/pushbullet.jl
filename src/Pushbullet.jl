@@ -48,19 +48,35 @@ function user()
 end
 
 function matchattribute(device, key :: AbstractString, val :: Number)
-    device[key] == val
+    if haskey(device, key)
+        device[key] == val
+    else
+        false
+    end
 end
 
 function matchattribute(device, key :: AbstractString, val :: AbstractString)
-    contains(device[key], val)
+    if haskey(device, key)
+        contains(device[key], val)
+    else
+        false
+    end
 end
 
 function matchattribute(device, key :: AbstractString, val :: Regex)
-    ismatch(val, device[key])
+    if haskey(device, key)
+        ismatch(val, device[key])
+    else
+        false
+    end
 end
 
 function matchattribute(device, key :: AbstractString, predicate :: Function)
-    predicate(device[key])
+    if haskey(device, key)
+        predicate(device[key])
+    else
+        false
+    end
 end
 
 function devices(;args...)
