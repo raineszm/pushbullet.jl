@@ -26,12 +26,14 @@ end
 const PBKEY = load_key()
 
 function api_call(page; method=:get, jsdata="")
-    url = string("https://", PBKEY, ":@", PB_API_URL, page)
+    url = string("https://", PB_API_URL, page)
+
+    header = @compat Dict("Access-Token" => PBKEY)
 
     if method == :get
-        response = get(url)
+        response = get(url, headers=header)
     elseif method == :post
-        response = post(url, json=jsdata)
+        response = post(url, json=jsdata, headers=header)
     else
         throw(ArgumentError("method must be :get or :post"))
     end
