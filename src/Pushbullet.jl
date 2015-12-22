@@ -48,44 +48,28 @@ function user()
 end
 
 function matchattribute(device, key :: AbstractString, val :: Number)
-    if haskey(device, key)
-        device[key] == val
-    else
-        false
-    end
+    device[key] == val
 end
 
 function matchattribute(device, key :: AbstractString, val :: AbstractString)
-    if haskey(device, key)
-        contains(device[key], val)
-    else
-        false
-    end
+    contains(device[key], val)
 end
 
 function matchattribute(device, key :: AbstractString, val :: Regex)
-    if haskey(device, key)
-        ismatch(val, device[key])
-    else
-        false
-    end
+    ismatch(val, device[key])
 end
 
 function matchattribute(device, key :: AbstractString, predicate :: Function)
-    if haskey(device, key)
-        predicate(device[key])
-    else
-        false
-    end
+    predicate(device[key])
 end
 
 function devices(;args...)
     devs = api_call("devices")["devices"]
     if isempty(args)
-        devs
+        filter!(dev -> dev["active"], devs)
     else
         filter!(devs) do dev
-            all([matchattribute(dev, string(k), v) for (k, v) in args])
+            dev["active"] && all([matchattribute(dev, string(k), v) for (k, v) in args])
         end
     end
 end
