@@ -1,3 +1,6 @@
+"""
+This module allows users to push data using the [Pushbullet](http://pushbullet.com) service. It requires that the user have a Pushbullet account. The necessary Pushbullet token can be acquired from the [account settings](https://www.pushbullet.com/account) page.
+"""
 module Pushbullet
 
 export user, devices, push_note, push_address, push_link, push_list
@@ -65,6 +68,22 @@ function matchattribute(device, key :: AbstractString, predicate :: Function)
     predicate(device[key])
 end
 
+"""
+Return a list of **active** devices on the supplied account which match the provided matchers. By default this returns a list of all active devices. Matchers may be provided as a *numeric value*, *string*, *regex*, or *predicate function* which will be compared ot the corresponding attribute of each device.
+
+For example:
+
+    Pushbullet.devices(nickname="nick")
+
+This will return all devices with a nickname that is *exactly* `"nick"`.
+
+We could instead call
+
+    Pushbullet.devices(nickname=r"nick")
+
+Which would return all devices whose nickname matches the regex `r"nick"`.
+
+"""
 function devices(;args...)
     devs = api_call("devices")["devices"]
     if isempty(args)
@@ -76,6 +95,9 @@ function devices(;args...)
     end
 end
 
+"""
+`iden` functions the same as `devices()` but returns on the `iden` attributes of the selected device objects.
+"""
 function iden(;args...)
     devs = devices(;args...)
     if isempty(devs)
