@@ -90,7 +90,7 @@ function devices(;args...)
         filter!(dev -> dev["active"], devs)
     else
         filter!(devs) do dev
-            dev["active"] && all([matchattribute(dev, string(k), v) for (k, v) in args])
+            dev["active"] && all(m -> matchattribute(dev, string(m[1]), m[2]), args)
         end
     end
 end
