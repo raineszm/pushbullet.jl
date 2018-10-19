@@ -5,12 +5,13 @@ module Pushbullet
 
 export user, devices, push_note, push_address, push_link, push_list
 
-using HTTP
+import HTTP
+import JSON
 using Compat
 
 const PB_API_URL = "api.pushbullet.com/v2/"
 
-type PushbulletException <: Exception
+struct PushbulletException <: Exception
     page :: AbstractString
     method :: Symbol
     status :: Int
@@ -34,15 +35,16 @@ function api_call(page; method=:get, jsdata="")
     header = @compat Dict("Access-Token" => PBKEY)
 
     if method == :get
-        response = get(url, headers=header)
+        response = HTTP.get(url, header)
     elseif method == :post
-        response = post(url, json=jsdata, headers=header)
+        header["Content-Type"] = "application/json"
+        response = HTTP.post(url, header, JSON.json(jsdata))
     else
         throw(ArgumentError("method must be :get or :post"))
     end
 
     if response.status == 200
-        HTTP.json(response)
+        JSON.parse(String(response.body))
     else
         throw(PushbulletException(page, method, response.status))
     end
@@ -57,11 +59,11 @@ function matchattribute(device, key :: AbstractString, val :: Number)
 end
 
 function matchattribute(device, key :: AbstractString, val :: AbstractString)
-    contains(device[key], val)
+    occursin(val, device[key])
 end
 
 function matchattribute(device, key :: AbstractString, val :: Regex)
-    ismatch(val, device[key])
+    occursin(device[key], val)
 end
 
 function matchattribute(device, key :: AbstractString, predicate :: Function)
@@ -119,7 +121,7 @@ function set_target!(push_data, target :: AbstractString)
     end
 end
 
-function set_target!(push_data, target :: Dict{AbstractString, Any})
+function set_target!(push_data, target :: Dict{<:AbstractString, Any})
     set_target!(push_data, target["iden"])
 end
 
